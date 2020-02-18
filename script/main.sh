@@ -6,13 +6,18 @@
 
 set -u
 
+logs_push() {
+  echo >&2 ":: Pushing logs to s3 (${S3_LOG_DIR})"
+  aws s3 sync "${HOME}/logs/" "${S3_LOG_DIR}"
+}
+
 dag_pull() {
-  echo >&2 ":: Pulling latest dags from s3 (${S3_FILE})"
+  echo >&2 ":: Pulling latest dags from s3 (${S3_DAG_FILE})"
 
   MY_TEMP="$(mktemp -d)" || exit
 
   cd "${MY_TEMP}"
-  aws s3 cp "${S3_FILE}" . || exit
+  aws s3 cp "${S3_DAG_FILE}" . || exit
   tar xfz latest.tgz
   rm -fv latest.tgz
   rsync -rapv --delete --delete-after "${MY_TEMP}/" "${HOME}/dags/"
