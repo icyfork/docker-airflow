@@ -15,7 +15,7 @@ dag_pull() {
   aws s3 cp "${S3_FILE}" . || exit
   tar xfz latest.tgz
   rm -fv latest.tgz
-  rsync -rapv --delete-after "${MY_TEMP}/" "${HOME}/dags/"
+  rsync -rapv --delete --delete-after "${MY_TEMP}/" "${HOME}/dags/"
   cd "${HOME}" && { rm -rf "${MY_TEMP}" || true; }
 }
 
