@@ -73,9 +73,16 @@ RUN set -ex \
         /usr/share/doc \
         /usr/share/doc-base
 
-COPY script/entrypoint.sh /entrypoint.sh
-COPY config/airflow.cfg ${AIRFLOW_USER_HOME}/airflow.cfg
+RUN pip install supervisor s3cmd awscli
 
+ENV TINI_VERSION v0.18.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+RUN chmod +x /tini
+
+COPY script/entrypoint.sh /entrypoint.sh
+COPY script/supervisord.conf /usr/local/airflow/supervisord.conf
+COPY config/airflow.cfg ${AIRFLOW_USER_HOME}/airflow.cfg
+RUN mkdir -pv /usr/local/airflow/supervisord/
 RUN chown -R airflow: ${AIRFLOW_USER_HOME}
 
 EXPOSE 8080 5555 8793

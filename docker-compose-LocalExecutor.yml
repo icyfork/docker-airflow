@@ -12,7 +12,8 @@ services:
                 max-file: "3"
 
     webserver:
-        image: puckel/docker-airflow:1.10.9
+        #image: puckel/docker-airflow:1.10.9
+        image: airflow
         restart: always
         depends_on:
             - postgres
@@ -28,7 +29,7 @@ services:
             # - ./plugins:/usr/local/airflow/plugins
         ports:
             - "8080:8080"
-        command: webserver
+        command: /tini -- /usr/local/bin/supervisord --nodaemon -c /usr/local/airflow/supervisord.conf -u airflow
         healthcheck:
             test: ["CMD-SHELL", "[ -f /usr/local/airflow/airflow-webserver.pid ]"]
             interval: 30s
